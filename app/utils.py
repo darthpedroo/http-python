@@ -1,3 +1,8 @@
+import os
+import pathlib
+DIRECTORY_PATH = pathlib.Path().resolve().parent
+
+
 def get_headers(request:str) -> list[str]:
     """Gets the headers from an http request (should be a string)
 
@@ -71,3 +76,33 @@ def is_valid_header(header: str) -> bool:
     key, _, value = header.partition(":")
     return bool(key.strip()) and bool(value.strip())
 
+def get_file(file_path:str, file_name:str)-> str | None:
+    """Gets a file from a path based on a name
+
+    Args:
+        file_path (str): Path to the folder of files
+        file_name (str): File name 
+
+    Returns:
+        str | None: 
+            Str if the file is in the folder
+            None if the file is not in the folder
+    """
+    full_file_path = f"{DIRECTORY_PATH}{file_path}"
+    files = os.listdir(full_file_path)
+
+    print(files)
+    print(file_name)
+    for file in files:
+        if file == file_name:
+            return f"{full_file_path}/{file_name}"
+    return None
+
+def get_file_size(full_file_path:str):
+    return os.path.getsize(full_file_path)
+
+def read_file(full_file_path:str) -> str:
+    with open(full_file_path, 'rb') as file: #Tenemos que usar rb en vez de r para leerlo en bytes
+        file_data = file.read()
+    
+    return file_data

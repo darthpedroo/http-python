@@ -1,10 +1,12 @@
 import socket  # noqa: F401
 import re
-from utils import get_headers, get_header, get_header_data
-from concurrent.futures import ThreadPoolExecutor
 import threading
+import os
+from utils import get_headers, get_header, get_header_data, get_file, get_file_size, read_file
+from concurrent.futures import ThreadPoolExecutor
 
 PORT = 4221
+FILES_PATH = "/files_data"
 def handle_client(client_socket):
     print("Client being handled !!!!")
     
@@ -16,6 +18,8 @@ def handle_client(client_socket):
 
             request_line = request.split("\r\n")[0]
             http_method , uri, http_protocol = request_line.split(" ")
+
+            uri:str
 
             headers = get_headers(request)
 
@@ -51,7 +55,26 @@ def handle_client(client_socket):
                         "\r\n"
                         f"{header_data}"
                     ).encode("utf-8")
+            
+            elif (uri.startswith('/files/')):
+                file_name = uri[len("/files/"):]
+                
+                current_file_path = get_file(FILES_PATH,file_name) # Obtener el archivo si existe
 
+                if current_file_path == None:
+                    response =b"HTTP/1.1 404 Not Found\r\n\r\n"
+                else:
+                    file_size = get_file_size(current_file_path)
+                    file_data = read_file(current_file_path)
+
+                    headers = (
+                        "HTTP/1.1 200 OK\r\n"
+                        "Content-Type: application/octet-stream\r\n"
+                        f"Content-Length: {file_size}\r\n"
+                        "\r\n"
+                    ).encode('utf-8')
+
+                    response = headers + file_data  # file_data debe ser bytes, no str
             else:
                 response =b"HTTP/1.1 404 Not Found\r\n\r\n"
                 
