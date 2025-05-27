@@ -1,0 +1,1 @@
+curl -v --data "print('hello world')" -H "Content-Type: application/octet-stream" http://localhost:4221/files/H.py

@@ -76,6 +76,17 @@ def is_valid_header(header: str) -> bool:
     key, _, value = header.partition(":")
     return bool(key.strip()) and bool(value.strip())
 
+def concatenate_path(file_path:str)->str:
+    """Concatenates a local path with the base dir url
+
+    Args:
+        file_path (str): The local path
+
+    Returns:
+        str: full path
+    """
+    return f"{DIRECTORY_PATH}{file_path}"
+
 def get_file(file_path:str, file_name:str)-> str | None:
     """Gets a file from a path based on a name
 
@@ -88,11 +99,10 @@ def get_file(file_path:str, file_name:str)-> str | None:
             Str if the file is in the folder
             None if the file is not in the folder
     """
-    full_file_path = f"{DIRECTORY_PATH}{file_path}"
+    full_file_path = concatenate_path(file_path)
     files = os.listdir(full_file_path)
 
-    print(files)
-    print(file_name)
+
     for file in files:
         if file == file_name:
             return f"{full_file_path}/{file_name}"
@@ -106,3 +116,26 @@ def read_file(full_file_path:str) -> str:
         file_data = file.read()
     
     return file_data
+
+def write_file(full_file_path: str, content) -> None:
+    """ Creates and writes a file
+
+    Args:
+        path (str): path to the desired file
+        content (bytes): data to write to the file
+    """
+    with open(full_file_path, "w") as f:
+        f.write(content)
+
+def get_body(request: str) -> str:
+    """
+    Gets the body from an HTTP request
+
+    Args:
+        request (str): http request
+
+    Returns:
+        str: Body of the http response
+    """
+    parts = request.split("\r\n\r\n", 1)  
+    return parts[1] if len(parts) > 1 else ""

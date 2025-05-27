@@ -1,16 +1,16 @@
 import socket  # noqa: F401
-import re
-import threading
-import os
-from utils import get_headers, get_header, get_header_data, get_file, get_file_size, read_file
+from utils import get_headers, get_header, get_header_data, get_file, get_file_size, read_file, concatenate_path, get_body
+from routes.index import index
+from routes.echo import echo
+from routes.user_agent import user_agent
+from routes.get_file_route import get_file_route
+from routes.write_file_route import write_file_route
 from concurrent.futures import ThreadPoolExecutor
 
 PORT = 4221
 FILES_PATH = "/files_data"
 def handle_client(client_socket):
     print("Client being handled !!!!")
-    
-    
     with client_socket:
         try:
             data = client_socket.recv(1024)
@@ -24,57 +24,33 @@ def handle_client(client_socket):
             headers = get_headers(request)
 
             if (uri == "/"):
-                    response = b"HTTP/1.1 200 OK\r\n\r\n"
+                response = index()
                 
             elif (uri.startswith("/echo/")):
-
+                
                 echo_value = uri[len("/echo/"):]
-                response_body = echo_value
-
-                response = (
-                    "HTTP/1.1 200 OK\r\n"
-                    "Content-Type: text/plain\r\n"
-                    f"Content-Length: {len(response_body)}\r\n"
-                    "\r\n"
-                    f"{response_body}"
-                ).encode('utf-8')
+                response = echo(echo_value)
 
             elif (uri == '/user-agent'):
 
-                current_header = get_header(headers, "User-Agent")
-                    
-                if current_header == None:
-                    response = b"HTTP/1.1 400 Bad Request\r\n\r\nMissing User-Agent header"
-                else:
-                    header_data = get_header_data(current_header)
-
-                    response = (
-                        "HTTP/1.1 200 OK\r\n"
-                        "Content-Type: text/plain\r\n"
-                        f"Content-Length: {len(header_data)}\r\n"
-                        "\r\n"
-                        f"{header_data}"
-                    ).encode("utf-8")
+                user_agent_header = get_header(headers, "User-Agent")
+                response = user_agent(user_agent_header)
             
-            elif (uri.startswith('/files/')):
-                file_name = uri[len("/files/"):]
+            elif (uri.startswith('/files/') and http_method == "POST"):
+                print(request)
+                body = get_body(request)
                 
-                current_file_path = get_file(FILES_PATH,file_name) # Obtener el archivo si existe
+                new_file_name = uri[len('/files/'):]
+                new_file_path = f"{FILES_PATH}/{new_file_name}"
+                full_path = concatenate_path(new_file_path)
+                response = write_file_route(full_path, body)
+                
+            elif (uri.startswith('/files/') and http_method == "GET"):
 
-                if current_file_path == None:
-                    response =b"HTTP/1.1 404 Not Found\r\n\r\n"
-                else:
-                    file_size = get_file_size(current_file_path)
-                    file_data = read_file(current_file_path)
+                file_name = uri[len("/files/"):]
+                current_file_path = get_file(FILES_PATH,file_name) 
+                response = get_file_route(current_file_path)
 
-                    headers = (
-                        "HTTP/1.1 200 OK\r\n"
-                        "Content-Type: application/octet-stream\r\n"
-                        f"Content-Length: {file_size}\r\n"
-                        "\r\n"
-                    ).encode('utf-8')
-
-                    response = headers + file_data  # file_data debe ser bytes, no str
             else:
                 response =b"HTTP/1.1 404 Not Found\r\n\r\n"
                 
