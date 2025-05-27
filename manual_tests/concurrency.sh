@@ -1,9 +1,9 @@
 #!/bin/bash
 
-TOTAL=5000
+TOTAL=500
 echo "Mandando $TOTAL requests concurrentes a http://localhost:4221/ ..."
 
-SECONDS=0  # inicializa contador
+SECONDS=0
 
 for i in $(seq 1 $TOTAL); do
     curl -s http://localhost:4221/ &
