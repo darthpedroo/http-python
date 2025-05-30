@@ -1,4 +1,4 @@
-### Trabajo Práctico 2 - Administración de Sistemas y Redes
+# Trabajo Práctico 2 - Administración de Sistemas y Redes
 
 ## Como ejecutar el programa
 
