@@ -6,7 +6,7 @@ Este proyecto consiste en una implementación simplificada del protocolo HTTP, d
 
 ## Ejecución del programa
 
-Para ejecutar el servidor, posicionarse en la raíz del proyecto y utilizar el siguiente comando:
+Para ejecutar el servidor, posicionarse en la raíz del proyecto y utilizar los siguientes comandos:
 
 ```bash
 cd app
