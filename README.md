@@ -9,4 +9,5 @@ Este proyecto consiste en una implementación simplificada del protocolo HTTP, d
 Para ejecutar el servidor, posicionarse en la raíz del proyecto y utilizar el siguiente comando:
 
 ```bash
-python ./app/main.py
+cd app
+python ./main.py
