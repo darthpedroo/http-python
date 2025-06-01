@@ -1,4 +1,4 @@
-# IMplementación servidor HTTP
+# Implementación servidor HTTP
 
 Desarrollamos un servidor HTTP en Python que permite manejar múltiples conexiones de clientes de forma concurrente, permite obtener respuestas estandar, leer archivos y crear archivos. 
 
@@ -9,6 +9,9 @@ Utilizamos la libreria concurrent.futures para maneja la concurrencia de los cli
 
 ## Como ejecutar
 
+```bash
 cd app
 python main.py
+
+```
 
