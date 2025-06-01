@@ -7,7 +7,7 @@ Desarrollamos un servidor HTTP en Python que permite manejar múltiples conexion
 Utilizamos la libreria socket para tener el protocolo TCP.
 Utilizamos la libreria concurrent.futures para maneja la concurrencia de los clientes.
 
-#Rutas
+# Rutas
 
 ## /index
 
